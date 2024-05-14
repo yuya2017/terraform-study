@@ -8,15 +8,21 @@ resource "aws_vpc" "my_vpc" {
 }
 
 # Subnetの作成
-resource "aws_subnet" "my_subnet" {
+resource "aws_subnet" "my_subnet_a" {
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = "10.0.0.0/24"
   availability_zone = "us-east-1a"
 }
 
+resource "aws_subnet" "my_subnet_b" {
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1b"
+}
+
 # IAM Roleの作成
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole"
+  name = "my-ecs-task-execution-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -76,7 +82,7 @@ resource "aws_ecs_service" "my_service" {
   launch_type = "FARGATE"
 
   network_configuration {
-    subnets         = [aws_subnet.my_subnet.id]
+    subnets         = [aws_subnet.my_subnet_a.id, aws_subnet.my_subnet_b.id]
     security_groups = [aws_security_group.ecs_service_sg.id]
   }
   load_balancer {
@@ -95,7 +101,7 @@ resource "aws_security_group" "ecs_service_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [aws_security_group.lb_sg.id]
+    security_groups = [aws_security_group.lb_sg.id]
   }
 }
 
@@ -118,7 +124,7 @@ resource "aws_lb" "my_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [aws_subnet.my_subnet.id]
+  subnets            = [aws_subnet.my_subnet_a.id, aws_subnet.my_subnet_b.id]
 
   enable_deletion_protection = false
 }
