@@ -108,6 +108,7 @@ resource "aws_ecs_service" "my_service" {
   launch_type = "FARGATE"
 
   network_configuration {
+    assign_public_ip = true
     subnets         = [aws_subnet.my_subnet_a.id, aws_subnet.my_subnet_b.id]
     security_groups = [aws_security_group.ecs_service_sg.id]
   }
@@ -129,6 +130,12 @@ resource "aws_security_group" "ecs_service_sg" {
     protocol    = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
+    egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # ロードバランサー用のセキュリティグループの作成
@@ -140,6 +147,12 @@ resource "aws_security_group" "lb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+    egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
