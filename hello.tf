@@ -213,7 +213,7 @@ resource "aws_iam_role" "github_actions" {
     {
       account_id  = data.aws_caller_identity.current.account_id,
       github_org  = "yuya2017",
-      github_repo = "teraform-study",
+      github_repo = "terraform-study",
     }
   )
 }
