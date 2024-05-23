@@ -3,7 +3,7 @@ name: workflow terraform
 on:
   push:
     paths:
-      - /*
+      - hello.tf
   workflow_dispatch:
 
 env:
