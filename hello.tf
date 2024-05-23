@@ -189,7 +189,7 @@ resource "aws_lb_listener" "my_listener" {
   }
 }
 
-// OUIDプロパイダ設定
+// OIDCプロパイダ設定
 data "http" "github_actions_openid_configuration" {
   url = "https://token.actions.githubusercontent.com/.well-known/openid-configuration"
 }
