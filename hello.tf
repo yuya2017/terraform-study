@@ -228,6 +228,6 @@ resource "aws_iam_role_policy_attachment" "github_actions" {
   policy_arn = aws_iam_policy.github_actions.arn
 }
 
-# output "alb_dns_name" {
-#   value = aws_lb.my_lb.dns_name
-# }
+output "alb_dns_name" {
+  value = aws_lb.my_lb.dns_name
+}
