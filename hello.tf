@@ -71,6 +71,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy_attachment"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# ECRリポジトリの作成
+resource "aws_ecr_repository" "my_ecr_repo" {
+  name = "my-ecr-repo"
+}
+
 # ECSクラスターの作成
 resource "aws_ecs_cluster" "my_cluster" {
   name = "my-cluster"
@@ -87,7 +92,7 @@ resource "aws_ecs_task_definition" "my_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "my-container"
-      image     = "nginx:latest"
+      image     = "${aws_ecr_repository.my_ecr_repo.repository_url}:latest"
       portMappings = [
         {
           containerPort = 80
